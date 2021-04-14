@@ -94,7 +94,19 @@ def main():
     floating_size = getFloatingSize(floating_size_text)  # int: 2
 
     lines = readInputFile()
+    output = []
     print('lines is ', lines)
+    for line in lines:
+        output.append(numberToBinary(line, getTypeOfInput(line)))
+    
+    # Start test
+    outputfile = open('./sample-output.txt', 'r')
+    correctoutput = outputfile.readlines()
+    correctoutput = list(map(lambda l: l.strip(), correctoutput))
+    outputfile.close()
+
+    assert set(output) == set(correctoutput), "Output was:\n" + str(output) + "\nShould be:\n" + str(correctoutput) + "."
+    # End test
 
 
 if __name__ == "__main__":
