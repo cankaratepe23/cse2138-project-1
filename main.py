@@ -4,8 +4,10 @@ class Type(Enum):
     SIGNED = 1
     FLOATING = 2
 
-possible_orderings = ['Little Endian', 'Big Endian']
+LITTLE_ENDIAN = 'Little Endian'
+BIG_ENDIAN = 'Big Endian'
 
+possible_orderings = [LITTLE_ENDIAN, BIG_ENDIAN]
 
 def readInputFile():
     file = open('./input.txt', 'r')
