@@ -9,10 +9,48 @@ BIG_ENDIAN = 'Big Endian'
 
 possible_orderings = [LITTLE_ENDIAN, BIG_ENDIAN]
 
+
 def readInputFile():
     file = open('./input.txt', 'r')
     lines = file.readlines()
     return list(map(lambda l: l.strip(), lines))
+
+def numberToBinary(input, type):
+    '''
+    Converts a given string, representing a number
+    to correct binary value according to the type 
+    '''
+    outBits = ''
+    if type == Type.UNSIGNED:
+        number = int(input[:-1])
+        while number > 0:
+            if number % 2 == 0:
+                outBits = '0' + outBits
+            else:
+                outBits = '1' + outBits
+            number = int(number / 2)
+        # Padding
+        while len(outBits) < 16:
+            outBits = '0' + outBits
+    elif type == Type.SIGNED:
+        number = int(input)
+        magnitude = numberToBinary((input[1:] if input[0] == '-' else input) + 'u', Type.UNSIGNED)
+        outBits = twosComplement(magnitude)
+    else:
+        raise NotImplementedError("Number type was wrong or not implemented.")
+    return outBits
+
+def twosComplement(binary):
+    outstr = ''
+    for c in binary:
+        if c == '0':
+            outstr += '1'
+        else:
+            outstr += '0'
+    number = int(outstr, 2)
+    number += 1
+    outstr = numberToBinary(str(number) + 'u', Type.UNSIGNED)
+    return outstr
 
 
 def handleFloatingPoint(floatingNumber):
