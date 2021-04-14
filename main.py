@@ -90,6 +90,7 @@ def main():
         exit(0)
 
     print('Floating point size: ', end='')
+	# C:TODO Validate input?
     floating_size_text = str(input())  # '2 bytes'
     floating_size = getFloatingSize(floating_size_text)  # int: 2
 
