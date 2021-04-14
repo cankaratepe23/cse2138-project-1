@@ -1,8 +1,8 @@
-types = [
-    'UNSIGNED',
-    'SIGNED',
-    'FLOATING'
-]
+from enum import Enum
+class Type(Enum):
+    UNSIGNED = 0
+    SIGNED = 1
+    FLOATING = 2
 
 possible_orderings = ['Little Endian', 'Big Endian']
 
@@ -16,7 +16,6 @@ def readInputFile():
 def handleFloatingPoint(floatingNumber):
     pass
 
-
 def getFloatingSize(floatingSizeText):
     '''
     Converts raw input string '2 bytes'
@@ -27,16 +26,21 @@ def getFloatingSize(floatingSizeText):
     return floating_size
 
 
-def getTypeOfInput():
+def getTypeOfInput(line):
     '''
     For a single input line determine
     whether if the number is unsigned or 
     floating point number etc.
-    Returns the corresponding element
-    in types array 
+    Returns the type as a Type enum
     '''
-    pass
-
+    if 'u' in line:     # Number is unsigned
+        return Type.UNSIGNED
+    elif '-' in line:   # Number is negative signed
+        return Type.SIGNED
+    elif '.' in line:   # Number is floating point
+        return Type.FLOATING
+    else:               # Number is positive signed
+        return Type.SIGNED
 
 def main():
     print('Byte ordering: ', end='')
