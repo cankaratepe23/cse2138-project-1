@@ -12,7 +12,7 @@ possible_orderings = [LITTLE_ENDIAN, BIG_ENDIAN]
 def readInputFile():
     file = open('./input.txt', 'r')
     lines = file.readlines()
-    return map(lambda l: l.strip(), lines)
+    return list(map(lambda l: l.strip(), lines))
 
 
 def handleFloatingPoint(floatingNumber):
