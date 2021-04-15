@@ -214,7 +214,7 @@ def nibbleToHexDigit(nibble):
         return hexDigitDict[number]
 
 
-def printBinaryAsHex(input, endianness):
+def convertBinaryToHex(input, endianness):
     if (endianness not in possible_orderings):
         raise AttributeError(str(endianness) + " is not a valid endianness.")
     hexDigits = list()
@@ -232,9 +232,7 @@ def printBinaryAsHex(input, endianness):
         for i in range(0, digitsLen, 2):
             bytesList.append(hexDigits[i] + hexDigits[i+1])
 
-    for byteString in bytesList:
-        print(byteString, end=' ')
-    print()
+    return " ".join(bytesList)
 
 
 def main():
@@ -264,7 +262,13 @@ def main():
     correctoutput = list(map(lambda l: l.strip(), correctoutput))
     outputfile.close()
 
-    assert set(output) == set(correctoutput), "Output was:\n" + str(output) + "\nShould be:\n" + str(
+    hex_outputs = []
+
+    for out in output:
+        result = convertBinaryToHex(out,ordering)
+        hex_outputs.append(result)
+
+    assert set(hex_outputs) == set(correctoutput), "Output was:\n" + str(hex_outputs) + "\nShould be:\n" + str(
         correctoutput) + "."
     # End test
 
