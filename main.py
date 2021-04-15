@@ -37,12 +37,12 @@ def binaryToNumber(input, type):
 
 def numberToBinary(input, type):
     '''
-    Converts a given string, representing a number
+    Converts a given string, representing a decimal number
     to correct binary value according to the type 
     '''
     outBits = ''
     if type == Type.UNSIGNED:
-        number = int(input[:-1])
+        number = int(input[:-1] if input[-1] == 'u' else input)
         while number > 0:
             if number % 2 == 0:
                 outBits = '0' + outBits
@@ -54,7 +54,7 @@ def numberToBinary(input, type):
             outBits = '0' + outBits
     elif type == Type.SIGNED:
         number = int(input)
-        magnitude = numberToBinary((input[1:] if input[0] == '-' else input) + 'u', Type.UNSIGNED)
+        magnitude = numberToBinary((input[1:] if input[0] == '-' else input), Type.UNSIGNED)
         outBits = twosComplement(magnitude)
     else:
         raise NotImplementedError("Number type was wrong or not implemented.")
