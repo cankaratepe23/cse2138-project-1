@@ -54,7 +54,9 @@ def roundUp(mantissa):
 
 
 def handleFractionLength(mantissa, fractionLength):
-    if fractionLength > len(mantissa):
+    if fractionLength == len(mantissa):
+        return mantissa
+    elif fractionLength > len(mantissa):
         while fractionLength > len(mantissa):
             mantissa += '0'
         return mantissa
@@ -76,7 +78,10 @@ def shiftFloatingPoint(mantissa, E):
     else:
         newIndex = currentIndex - abs(E)
 
-    return mantissa[:newIndex] + "." + mantissa[newIndex:]
+    output = mantissa[:newIndex] + "." + mantissa[newIndex:]
+    indexOfOne = output.find('1')
+    output = output[indexOfOne:]
+    return output
 
 
 def numberToBinary(input, type, floating_size=4, padding=16):
@@ -114,6 +119,8 @@ def numberToBinary(input, type, floating_size=4, padding=16):
         wholePart = int(number)
         fractionPart = number - wholePart
         wholeBinary = numberToBinary(str(wholePart), Type.UNSIGNED, padding=0)
+        if wholeBinary == '':
+            wholeBinary = '0'
         fractionBinary = ""
         result = fractionPart
         while result != 1 and result != 0:  # TODO: FIX INFINITE LOOP!
