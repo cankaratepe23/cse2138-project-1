@@ -123,7 +123,7 @@ def numberToBinary(input, type, floating_size=4, padding=16):
             wholeBinary = '0'
         fractionBinary = ""
         result = fractionPart
-        while result != 1 and result != 0:  # TODO: FIX INFINITE LOOP!
+        while result != 1 and result != 0:
             result = result * 2
             if result < 1.0:
                 fractionBinary += "0"
@@ -267,22 +267,14 @@ def main():
         output.append(numberToBinary(
             line, getTypeOfInput(line), floating_size))
 
-    # Start test
-    outputfile = open('./sample-output.txt', 'r')
-    correctoutput = outputfile.readlines()
-    correctoutput = list(map(lambda l: l.strip(), correctoutput))
-    outputfile.close()
-
     hex_outputs = []
 
     for out in output:
         result = convertBinaryToHex(out, ordering)
-        hex_outputs.append(result)
+        hex_outputs.append(result + "\n")
 
-
-
-    print(str(hex_outputs))
-    # End test
+    outputFile = open("output.txt", "w")
+    outputFile.writelines(hex_outputs)
 
 
 if __name__ == "__main__":
