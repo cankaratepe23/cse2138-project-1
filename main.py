@@ -98,8 +98,10 @@ def numberToBinary(input, type, floating_size=4, padding=16):
             outBits = '0' + outBits
     elif type == Type.SIGNED:
         number = int(input)
-        magnitude = numberToBinary((input[1:] if input[0] == '-' else input), Type.UNSIGNED, padding=padding)
-        outBits = twosComplement(magnitude, padding) if number < 0 else magnitude
+        magnitude = numberToBinary(
+            (input[1:] if input[0] == '-' else input), Type.UNSIGNED, padding=padding)
+        outBits = twosComplement(
+            magnitude, padding) if number < 0 else magnitude
     else:
         number = float(input)
         if number < 0:
@@ -125,12 +127,14 @@ def numberToBinary(input, type, floating_size=4, padding=16):
                 result = result - int(result)
 
         mantissa = wholeBinary + '.' + fractionBinary
-        E = mantissa.find('.') - 1 if mantissa[0] == '1' else -1 * (mantissa.find('1') - 1)
+        E = mantissa.find(
+            '.') - 1 if mantissa[0] == '1' else -1 * (mantissa.find('1') - 1)
         mantissa = shiftFloatingPoint(mantissa, E)
         mantissa = handleFractionLength(mantissa[2:], numberOfMantissaBits)
 
         exp = E + pow(2, numberOfExponentBits - 1) - 1
-        expInBinary = numberToBinary(str(exp), Type.UNSIGNED, padding=numberOfExponentBits)
+        expInBinary = numberToBinary(
+            str(exp), Type.UNSIGNED, padding=numberOfExponentBits)
 
         outBits += expInBinary + mantissa
     return outBits
@@ -151,10 +155,6 @@ def twosComplement(binary, padding):
     number += 1
     outstr = numberToBinary(str(number), Type.UNSIGNED, padding=padding)
     return outstr
-
-
-def handleFloatingPoint(floatingNumber):
-    pass
 
 
 def getFloatingSize(floatingSizeText):
@@ -200,6 +200,7 @@ def getNumberOfExponentBits(floating_size):
     else:
         return 12
 
+
 def nibbleToHexDigit(nibble):
     number = binaryToNumber(("0"*12) + nibble, Type.UNSIGNED)
     if number < 10:
@@ -224,7 +225,7 @@ def convertBinaryToHex(input, endianness):
     while len(input) % 4 != 0:
         input = "0" + input
     for i in range(0, len(input), 4):
-        hexDigits.append(nibbleToHexDigit(input[i : i + 4]))
+        hexDigits.append(nibbleToHexDigit(input[i: i + 4]))
 
     digitsLen = len(hexDigits)
     if endianness == LITTLE_ENDIAN:
@@ -256,7 +257,8 @@ def main():
     output = []
 
     for line in lines:
-        output.append(numberToBinary(line, getTypeOfInput(line), floating_size))
+        output.append(numberToBinary(
+            line, getTypeOfInput(line), floating_size))
 
     # Start test
     outputfile = open('./sample-output.txt', 'r')
@@ -267,7 +269,7 @@ def main():
     hex_outputs = []
 
     for out in output:
-        result = convertBinaryToHex(out,ordering)
+        result = convertBinaryToHex(out, ordering)
         hex_outputs.append(result)
 
     assert set(hex_outputs) == set(correctoutput), "Output was:\n" + str(hex_outputs) + "\nShould be:\n" + str(
