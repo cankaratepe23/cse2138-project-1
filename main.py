@@ -1,8 +1,11 @@
 from enum import Enum
+
+
 class Type(Enum):
     UNSIGNED = 0
     SIGNED = 1
     FLOATING = 2
+
 
 LITTLE_ENDIAN = 'Little Endian'
 BIG_ENDIAN = 'Big Endian'
@@ -15,6 +18,7 @@ def readInputFile():
     lines = file.readlines()
     return list(map(lambda l: l.strip(), lines))
 
+
 def binaryToNumber(input, type):
     '''
     Converts a given 16-bit binary string
@@ -24,7 +28,7 @@ def binaryToNumber(input, type):
     if type == Type.UNSIGNED:
         for i in range(0, len(input)):
             if input[i] == '1':
-                outDecimal = outDecimal + pow(2, 16-(i+1))
+                outDecimal = outDecimal + pow(2, 16 - (i + 1))
     elif type == Type.SIGNED:
         if input[0] == '1':
             binaryAbsolute = twosComplement(input)
@@ -34,6 +38,7 @@ def binaryToNumber(input, type):
     else:
         raise NotImplementedError("Number type was wrong or not implemented.")
     return outDecimal
+
 
 def numberToBinary(input, type):
     '''
@@ -60,6 +65,7 @@ def numberToBinary(input, type):
         raise NotImplementedError("Number type was wrong or not implemented.")
     return outBits
 
+
 def twosComplement(binary):
     outstr = ''
     for c in binary:
@@ -76,6 +82,7 @@ def twosComplement(binary):
 def handleFloatingPoint(floatingNumber):
     pass
 
+
 def getFloatingSize(floatingSizeText):
     '''
     Converts raw input string '2 bytes'
@@ -89,18 +96,34 @@ def getFloatingSize(floatingSizeText):
 def getTypeOfInput(line):
     '''
     For a single input line determine
-    whether if the number is unsigned or 
+    whether if the number is unsigned or
     floating point number etc.
     Returns the type as a Type enum
     '''
-    if 'u' in line:     # Number is unsigned
+    if 'u' in line:  # Number is unsigned
         return Type.UNSIGNED
-    elif '-' in line:   # Number is negative signed
+    elif '-' in line:  # Number is negative signed
         return Type.SIGNED
-    elif '.' in line:   # Number is floating point
+    elif '.' in line:  # Number is floating point
         return Type.FLOATING
-    else:               # Number is positive signed
+    else:  # Number is positive signed
         return Type.SIGNED
+
+
+def getNumberOfExponentBits(floating_size):
+    '''
+    Returns the number of exponent bits
+    based on the floating point size
+    '''
+    if floating_size == 1:
+        return 3
+    elif floating_size == 2:
+        return 8
+    elif floating_size == 3:
+        return 10
+    else:
+        return 12
+
 
 def main():
     print('Byte ordering: ', end='')
@@ -110,23 +133,27 @@ def main():
         exit(0)
 
     print('Floating point size: ', end='')
-	# C:TODO Validate input?
     floating_size_text = str(input())  # '2 bytes'
     floating_size = getFloatingSize(floating_size_text)  # int: 2
+
+    if floating_size not in [1, 2, 3, 4]:
+        print('Floating point size is not valid')
+        exit(-1)
 
     lines = readInputFile()
     output = []
     print('lines is ', lines)
     for line in lines:
         output.append(numberToBinary(line, getTypeOfInput(line)))
-    
+
     # Start test
     outputfile = open('./sample-output.txt', 'r')
     correctoutput = outputfile.readlines()
     correctoutput = list(map(lambda l: l.strip(), correctoutput))
     outputfile.close()
 
-    assert set(output) == set(correctoutput), "Output was:\n" + str(output) + "\nShould be:\n" + str(correctoutput) + "."
+    assert set(output) == set(correctoutput), "Output was:\n" + str(output) + "\nShould be:\n" + str(
+        correctoutput) + "."
     # End test
 
 
