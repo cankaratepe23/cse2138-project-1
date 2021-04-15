@@ -198,6 +198,44 @@ def getNumberOfExponentBits(floating_size):
     else:
         return 12
 
+def nibbleToHexDigit(nibble):
+    number = binaryToNumber(("0"*12) + nibble, Type.UNSIGNED)
+    if number < 10:
+        return str(number)
+    else:
+        hexDigitDict = {
+            10: "A",
+            11: "B",
+            12: "C",
+            13: "D",
+            14: "E",
+            15: "F"
+        }
+        return hexDigitDict[number]
+
+
+def printBinaryAsHex(input, endianness):
+    if (endianness not in possible_orderings):
+        raise AttributeError(str(endianness) + " is not a valid endianness.")
+    hexDigits = list()
+    bytesList = list()
+    while len(input) % 4 != 0:
+        input = "0" + input
+    for i in range(0, len(input), 4):
+        hexDigits.append(nibbleToHexDigit(input[i : i + 4]))
+
+    digitsLen = len(hexDigits)
+    if endianness == LITTLE_ENDIAN:
+        for i in range(0, digitsLen, 2):
+            bytesList.insert(0, hexDigits[i] + hexDigits[i+1])
+    else:
+        for i in range(0, digitsLen, 2):
+            bytesList.append(hexDigits[i] + hexDigits[i+1])
+
+    for byteString in bytesList:
+        print(byteString, end=' ')
+    print()
+
 
 def main():
     print('Byte ordering: ', end='')
