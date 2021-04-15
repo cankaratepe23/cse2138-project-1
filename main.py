@@ -15,6 +15,26 @@ def readInputFile():
     lines = file.readlines()
     return list(map(lambda l: l.strip(), lines))
 
+def binaryToNumber(input, type):
+    '''
+    Converts a given 16-bit binary string
+    to correct decimal value according to the type
+    '''
+    outDecimal = 0
+    if type == Type.UNSIGNED:
+        for i in range(0, len(input)):
+            if input[i] == '1':
+                outDecimal = outDecimal + pow(2, 16-(i+1))
+    elif type == Type.SIGNED:
+        if input[0] == '1':
+            binaryAbsolute = twosComplement(input)
+            outDecimal = binaryToNumber(binaryAbsolute, Type.UNSIGNED) * -1
+        else:
+            outDecimal = binaryToNumber(input, Type.UNSIGNED)
+    else:
+        raise NotImplementedError("Number type was wrong or not implemented.")
+    return outDecimal
+
 def numberToBinary(input, type):
     '''
     Converts a given string, representing a number
