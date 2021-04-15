@@ -99,7 +99,7 @@ def numberToBinary(input, type, floating_size=4, padding=16):
     elif type == Type.SIGNED:
         number = int(input)
         magnitude = numberToBinary((input[1:] if input[0] == '-' else input), Type.UNSIGNED, padding=padding)
-        outBits = twosComplement(magnitude, padding)
+        outBits = twosComplement(magnitude, padding) if number < 0 else magnitude
     else:
         number = float(input)
         if number < 0:
@@ -133,12 +133,14 @@ def numberToBinary(input, type, floating_size=4, padding=16):
         expInBinary = numberToBinary(str(exp), Type.UNSIGNED, padding=numberOfExponentBits)
 
         outBits += expInBinary + mantissa
-        print(wholeBinary)
-        print(fractionBinary)
     return outBits
 
 
 def twosComplement(binary, padding):
+
+    if binary == '0'*16:
+        return binary
+
     outstr = ''
     for c in binary:
         if c == '0':
@@ -252,7 +254,7 @@ def main():
 
     lines = readInputFile()
     output = []
-    print('lines is ', lines)
+
     for line in lines:
         output.append(numberToBinary(line, getTypeOfInput(line), floating_size))
 
@@ -270,6 +272,8 @@ def main():
 
     assert set(hex_outputs) == set(correctoutput), "Output was:\n" + str(hex_outputs) + "\nShould be:\n" + str(
         correctoutput) + "."
+
+    print(str(hex_outputs))
     # End test
 
 
