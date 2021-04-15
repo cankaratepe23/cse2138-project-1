@@ -40,7 +40,46 @@ def binaryToNumber(input, type):
     return outDecimal
 
 
-def numberToBinary(input, type, padding=True):
+def roundUp(mantissa):
+    newMantissa = ''
+    lastIndexCopied = len(mantissa)
+    for i in reversed(range(len(mantissa))):
+        lastIndexCopied = i
+        if mantissa[i] == '1':
+            newMantissa += '0'
+        elif mantissa[i] == '0':
+            newMantissa += '1'
+            break
+    return mantissa[:lastIndexCopied] + newMantissa[::-1]
+
+
+def handleFractionLength(mantissa, fractionLength):
+    if fractionLength > len(mantissa):
+        while fractionLength > len(mantissa):
+            mantissa += '0'
+        return mantissa
+
+    remainingBitsIndex = fractionLength - len(mantissa)
+    remainingBits = mantissa[remainingBitsIndex:]
+    newMantissa = mantissa[:remainingBitsIndex]
+    if remainingBits[0] == '1' and remainingBits[1:].find('1') != -1:
+        newMantissa = roundUp(newMantissa)
+    return newMantissa
+
+
+def shiftFloatingPoint(mantissa, E):
+    currentIndex = mantissa.find('.')
+    mantissa = mantissa.replace('.', '')
+    newIndex = 0
+    if E <= 0:
+        newIndex = currentIndex + abs(E)
+    else:
+        newIndex = currentIndex - abs(E)
+
+    return mantissa[:newIndex] + "." + mantissa[newIndex:]
+
+
+def numberToBinary(input, type, floating_size=4, padding=16):
     '''
     Converts a given string, representing a decimal number
     to correct binary value according to the type 
@@ -55,7 +94,7 @@ def numberToBinary(input, type, padding=True):
                 outBits = '1' + outBits
             number = int(number / 2)
         # Padding
-        while padding and len(outBits) < 16:
+        while padding > 0 and len(outBits) < padding:
             outBits = '0' + outBits
     elif type == Type.SIGNED:
         number = int(input)
@@ -67,13 +106,15 @@ def numberToBinary(input, type, padding=True):
             outBits += '1'
         else:
             outBits += '0'
+        numberOfExponentBits = getNumberOfExponentBits(floating_size)
+        numberOfMantissaBits = (floating_size * 8) - numberOfExponentBits - 1
         number = abs(number)
         wholePart = int(number)
         fractionPart = number - wholePart
-        wholeBinary = numberToBinary(str(wholePart), Type.UNSIGNED, False)
+        wholeBinary = numberToBinary(str(wholePart), Type.UNSIGNED, padding=0)
         fractionBinary = ""
         result = fractionPart
-        while result != 1:  # TODO: FIX INFINITE LOOP!
+        while result != 1 and result != 0:  # TODO: FIX INFINITE LOOP!
             result = result * 2
             if result < 1.0:
                 fractionBinary += "0"
@@ -82,6 +123,16 @@ def numberToBinary(input, type, padding=True):
                 if result == 1:
                     break
                 result = result - int(result)
+
+        mantissa = wholeBinary + '.' + fractionBinary
+        E = mantissa.find('.') - 1 if mantissa[0] == '1' else -1 * (mantissa.find('1') - 1)
+        mantissa = shiftFloatingPoint(mantissa, E)
+        mantissa = handleFractionLength(mantissa[2:], numberOfMantissaBits)
+
+        exp = E + pow(2, numberOfExponentBits - 1)
+        expInBinary = numberToBinary(exp, Type.SIGNED, padding=numberOfExponentBits)
+
+        outBits += expInBinary + mantissa
         print(wholeBinary)
         print(fractionBinary)
     return outBits
@@ -167,7 +218,7 @@ def main():
     output = []
     print('lines is ', lines)
     for line in lines:
-        output.append(numberToBinary(line, getTypeOfInput(line)))
+        output.append(numberToBinary(line, getTypeOfInput(line), floating_size))
 
     # Start test
     outputfile = open('./sample-output.txt', 'r')
