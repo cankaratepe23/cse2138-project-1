@@ -1,5 +1,6 @@
 from enum import Enum
 
+
 class Type(Enum):
     UNSIGNED = 0
     SIGNED = 1
@@ -72,7 +73,7 @@ def numberToBinary(input, type, padding=True):
         wholeBinary = numberToBinary(str(wholePart), Type.UNSIGNED, False)
         fractionBinary = ""
         result = fractionPart
-        while result != 1: # TODO: FIX INFINITE LOOP!
+        while result != 1:  # TODO: FIX INFINITE LOOP!
             result = result * 2
             if result < 1.0:
                 fractionBinary += "0"
@@ -135,12 +136,14 @@ def getNumberOfExponentBits(floating_size):
     Returns the number of exponent bits
     based on the floating point size
     '''
-    if floating_size == 1:
-        return 3
-    elif floating_size == 2:
-        return 8
-    elif floating_size == 3:
-        return 10
+    bitsDictionary = {
+        1: 3,
+        2: 8,
+        3: 10,
+    }
+
+    if 0 < floating_size < 3:
+        return bitsDictionary[floating_size]
     else:
         return 12
 
