@@ -98,8 +98,8 @@ def numberToBinary(input, type, floating_size=4, padding=16):
             outBits = '0' + outBits
     elif type == Type.SIGNED:
         number = int(input)
-        magnitude = numberToBinary((input[1:] if input[0] == '-' else input), Type.UNSIGNED)
-        outBits = twosComplement(magnitude)
+        magnitude = numberToBinary((input[1:] if input[0] == '-' else input), Type.UNSIGNED, padding=padding)
+        outBits = twosComplement(magnitude, padding)
     else:
         number = float(input)
         if number < 0:
@@ -129,8 +129,8 @@ def numberToBinary(input, type, floating_size=4, padding=16):
         mantissa = shiftFloatingPoint(mantissa, E)
         mantissa = handleFractionLength(mantissa[2:], numberOfMantissaBits)
 
-        exp = E + pow(2, numberOfExponentBits - 1)
-        expInBinary = numberToBinary(exp, Type.SIGNED, padding=numberOfExponentBits)
+        exp = E + pow(2, numberOfExponentBits - 1) - 1
+        expInBinary = numberToBinary(str(exp), Type.UNSIGNED, padding=numberOfExponentBits)
 
         outBits += expInBinary + mantissa
         print(wholeBinary)
@@ -138,7 +138,7 @@ def numberToBinary(input, type, floating_size=4, padding=16):
     return outBits
 
 
-def twosComplement(binary):
+def twosComplement(binary, padding):
     outstr = ''
     for c in binary:
         if c == '0':
@@ -147,7 +147,7 @@ def twosComplement(binary):
             outstr += '0'
     number = binaryToNumber(outstr, Type.UNSIGNED)
     number += 1
-    outstr = numberToBinary(str(number), Type.UNSIGNED)
+    outstr = numberToBinary(str(number), Type.UNSIGNED, padding=padding)
     return outstr
 
 
