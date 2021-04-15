@@ -1,6 +1,5 @@
 from enum import Enum
 
-
 class Type(Enum):
     UNSIGNED = 0
     SIGNED = 1
@@ -40,7 +39,7 @@ def binaryToNumber(input, type):
     return outDecimal
 
 
-def numberToBinary(input, type):
+def numberToBinary(input, type, padding=True):
     '''
     Converts a given string, representing a decimal number
     to correct binary value according to the type 
@@ -55,14 +54,35 @@ def numberToBinary(input, type):
                 outBits = '1' + outBits
             number = int(number / 2)
         # Padding
-        while len(outBits) < 16:
+        while padding and len(outBits) < 16:
             outBits = '0' + outBits
     elif type == Type.SIGNED:
         number = int(input)
         magnitude = numberToBinary((input[1:] if input[0] == '-' else input), Type.UNSIGNED)
         outBits = twosComplement(magnitude)
     else:
-        raise NotImplementedError("Number type was wrong or not implemented.")
+        number = float(input)
+        if number < 0:
+            outBits += '1'
+        else:
+            outBits += '0'
+        number = abs(number)
+        wholePart = int(number)
+        fractionPart = number - wholePart
+        wholeBinary = numberToBinary(str(wholePart), Type.UNSIGNED, False)
+        fractionBinary = ""
+        result = fractionPart
+        while result != 1: # TODO: FIX INFINITE LOOP!
+            result = result * 2
+            if result < 1.0:
+                fractionBinary += "0"
+            else:
+                fractionBinary += "1"
+                if result == 1:
+                    break
+                result = result - int(result)
+        print(wholeBinary)
+        print(fractionBinary)
     return outBits
 
 
@@ -90,7 +110,7 @@ def getFloatingSize(floatingSizeText):
     '''
     floating_size_list = floatingSizeText.split(' ')
     floating_size = floating_size_list[0]
-    return floating_size
+    return int(floating_size)
 
 
 def getTypeOfInput(line):
@@ -102,10 +122,10 @@ def getTypeOfInput(line):
     '''
     if 'u' in line:  # Number is unsigned
         return Type.UNSIGNED
-    elif '-' in line:  # Number is negative signed
-        return Type.SIGNED
     elif '.' in line:  # Number is floating point
         return Type.FLOATING
+    elif '-' in line:  # Number is negative signed
+        return Type.SIGNED
     else:  # Number is positive signed
         return Type.SIGNED
 
