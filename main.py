@@ -67,9 +67,9 @@ def twosComplement(binary):
             outstr += '1'
         else:
             outstr += '0'
-    number = int(outstr, 2)
+    number = binaryToNumber(outstr, Type.UNSIGNED)
     number += 1
-    outstr = numberToBinary(str(number) + 'u', Type.UNSIGNED)
+    outstr = numberToBinary(str(number), Type.UNSIGNED)
     return outstr
 
 
